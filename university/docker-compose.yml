@@ -21,18 +21,40 @@ services:
             - '.:/var/www/html'
         networks:
             - sail
-            - local
         depends_on:
-            - selenium
-    selenium:
-        image: 'selenium/standalone-chrome'
+            - db
+    db:
+        image: mysql:8
+        command: mysqld --default-authentication-plugin=mysql_native_password
+        ports:
+            - 3306:3306
+        environment:
+            MYSQL_ROOT_PASSWORD: 'pass123'
+            MYSQL_ROOT_HOST: "%"
+            MYSQL_DATABASE: 'university'
+            MYSQL_USER: 'uberflip'
+            MYSQL_PASSWORD: 'pass123'
+            MYSQL_ALLOW_EMPTY_PASSWORD: 1
         volumes:
-            - '/dev/shm:/dev/shm'
+            - '../db/schema.sql:/docker-entrypoint-initdb.d/1.schema.sql'
         networks:
             - sail
-            - local
+        healthcheck:
+            test: ["CMD", "mysqladmin", "ping", "-ppass123"]
+            retries: 3
+            timeout: 20s
+    # Adminer
+    dba:
+        depends_on: 
+            - db
+        image: adminer:4
+        ports:
+            - 8033:8080
+        networks:
+            - sail
 networks:
-    local:
-        external: true
     sail:
         driver: bridge
+volumes:
+    sail-mysql:
+        driver: local
