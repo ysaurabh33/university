@@ -18,6 +18,9 @@
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="py-2 inline-block min-w-full sm:px-6 lg:px-8">
                     <div class="overflow-hidden">
+                        @if($universities->isEmpty())
+                        <div class="bg-red-100 rounded-lg py-5 px-6 mb-4 text-base text-red-700 mb-3" role="alert">No Data Found</div>
+                        @else
                         <table class="min-w-full">
                             <thead class="border-b bg-gray-800">
                                 <tr>
@@ -53,6 +56,7 @@
                         <div class="mt-3">
                             {{ $universities->links() }}
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
